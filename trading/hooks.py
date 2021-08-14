@@ -5,10 +5,10 @@ from . import __version__ as app_version
 app_name = "trading"
 app_title = "Trading"
 app_publisher = "Craft"
-app_description = "Trading"
+app_description = "App for Trading companies"
 app_icon = "octicon octicon-file-directory"
 app_color = "grey"
-app_email = "test@test.com"
+app_email = "hafees@craftinteractive.ae"
 app_license = "MIT"
 
 # Includes in <head>
@@ -26,7 +26,7 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {"Sales Invoice" : "public/js/sales_invoice.js","Purchase Order":"public/js/purchase_order.js","Delivery Note":"public/js/delivery_note.js","Purchase Invoice":"public/js/purchase_invoice.js","Quotation" : "public/js/quotation.js",}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -79,9 +79,72 @@ app_license = "MIT"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
+fixtures = [
+    {
+        "doctype": "Custom Field",
+        "filters": [
+            [
+                "name",
+                "in",
+                [
+                    "Company-warehouse",
+                    "Company-sales_taxes_and_charges",
+                    "Company-purchase_taxes_and_charges",
+                    "Sales Invoice-delivery_note",
+                    "Sales Invoice-last_transaction_details",
+                    "Sales Invoice-previous_transaction",
+                    "Delivery Note-last_transaction_details",
+                    "Delivery Note-previous_transaction",
+                    "Purchase Receipt-purchase_receipt"
+
+                ]
+            ]
+        ]
+    },
+    {
+        "doctype": "Property Setter",
+        "filters": [
+            [
+                "name",
+                "in",
+                [
+                    "Sales Invoice-accounting_dimensions_section-hidden",
+                    "Sales Invoice-currency_and_price_list-hidden",
+                    "Sales Invoice-packing_list-hidden",
+                    "Sales Invoice-time_sheet_list-hidden",
+                    "Sales Invoice-loyalty_points_redemption-hidden",
+                    "Sales Invoice-payments_section-hidden",
+                    "Sales Invoice-column_break4-column_break4",
+                    "Sales Invoice-vat_section-hidden",
+                    "Sales Invoice-more_information-hidden",
+                    "Sales Invoice-subscription_section-hidden",
+                    "Delivery Note-transporter_info-hidden",
+                    "Delivery Note-more_info-hidden",
+                    "Delivery Note-section_break_83-hidden",
+                    "Delivery Note-subscription_section-hidden",
+                    "Delivery Note-sales_team_section_break-hidden",
+                    "Delivery Note-section_break1-hidden",
+                    "Purchase Order-Subscription Section-hidden",
+                    "Purchase Order-ref_sq-hidden-hidden",
+                    "Purchase Invoice-write_off-hidden",
+                    "Purchase Invoice-subscription_section-hidden"
+                ]
+            ]
+        ]
+    }
+
+                    
+]
+
+
+doc_events = {
+	"Sales Invoice": {
+		"validate": "trading.events.sales_invoice.change_autoname_and_remarks"
+       },
+    "Delivery Note": {
+		"validate": "trading.events.delivery_note.change_autoname"
+       }   
+}
 # 		"on_cancel": "method",
 # 		"on_trash": "method"
 #	}
@@ -97,33 +160,4 @@ app_license = "MIT"
 # 	"daily": [
 # 		"trading.tasks.daily"
 # 	],
-# 	"hourly": [
-# 		"trading.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"trading.tasks.weekly"
-# 	]
-# 	"monthly": [
-# 		"trading.tasks.monthly"
-# 	]
-# }
-
-# Testing
-# -------
-
-# before_tests = "trading.install.before_tests"
-
-# Overriding Methods
-# ------------------------------
-#
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "trading.event.get_events"
-# }
-#
-# each overriding function accepts a `data` argument;
-# generated from the base implementation of the doctype dashboard,
-# along with any modifications made in other Frappe apps
-# override_doctype_dashboards = {
-# 	"Task": "trading.task.get_dashboard_data"
-# }
-
+#}
