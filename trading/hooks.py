@@ -26,7 +26,13 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-doctype_js = {"Sales Invoice" : "public/js/sales_invoice.js","Purchase Order":"public/js/purchase_order.js","Delivery Note":"public/js/delivery_note.js","Purchase Invoice":"public/js/purchase_invoice.js","Quotation" : "public/js/quotation.js",}
+doctype_js = {
+    "Sales Invoice" : "public/js/sales_invoice.js",
+    "Purchase Order":"public/js/purchase_order.js",
+    "Delivery Note":"public/js/delivery_note.js",
+    "Purchase Invoice":"public/js/purchase_invoice.js",
+    "Quotation" : "public/js/quotation.js"
+    }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -142,7 +148,7 @@ doc_events = {
 		"validate": "trading.events.sales_invoice.change_autoname_and_remarks"
        },
     "Delivery Note": {
-		"validate": "trading.events.delivery_note.change_autoname"
+		"validate": "trading.events.delivery_note.change_autoname_new_form"
        }   
 }
 # 		"on_cancel": "method",

@@ -1,4 +1,25 @@
 
+
+frappe.ui.form.on("Delivery Note", {
+
+	"after_save": function(frm) {
+		if (frm.doc.manual) {
+			if((frm.doc.manual_naming_series != frm.doc.name) && (!frm.doc.__islocal)) {				
+				frappe.call({
+					method: "trading.events.delivery_note.change_autoname_after_save",
+					args:{
+						"name":frm.doc.name,
+						"manual_naming_series":frm.doc.manual_naming_series
+					},
+					callback: function(r) {
+						frappe.set_route('List', 'Delivery Note', 'List');
+					}
+				});
+			}			
+		}		
+	}
+});
+
 frappe.ui.form.on('Delivery Note Item', {
         item_code:function(frm,cdt,cdn){
      		var d = locals[cdt][cdn]

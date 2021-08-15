@@ -16,4 +16,29 @@ def change_autoname_and_remarks(doc, handler=None):
 				doc.remarks = _("Against Customer Order {0} dated {1}").format(doc.po_no,
 					formatdate(doc.po_date))
 			else:
-				doc.remarks = _("No Remarks")    
+				doc.remarks = _("No Remarks")
+
+@frappe.whitelist()
+def change_autoname_and_remarks_after_save(**args):
+	"""
+	maped the manual autoname and remarks in delivery note
+	"""
+	if args.get("manual_naming_series"):
+		is_exist = frappe.db.exists("Sales Invoice", args.get("name"))
+		if is_exist:
+			frappe.db.sql("""
+				update `tabSales Invoice` 
+					set name = "{manual_naming_series}",
+					manual = 1
+					where name = "{name}";""".format(
+						name = is_exist, 
+						manual_naming_series = args.get("manual_naming_series")))
+			frappe.db.commit()
+			frappe.db.sql("""
+				update `tabSales Invoice Item` 
+					set parent = "{manual_naming_series}" 
+					where parent = "{name}";""".format(
+						name = is_exist, 
+						manual_naming_series = args.get("manual_naming_series")))
+			frappe.db.commit()
+	return True

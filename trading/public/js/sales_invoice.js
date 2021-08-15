@@ -14,8 +14,6 @@ frappe.ui.form.on('Sales Invoice', {
 			frm.set_value("update_stock",1)
 	   	}
             }
-
-
 	},
 	setup:function(frm)
 	{
@@ -24,36 +22,52 @@ frappe.ui.form.on('Sales Invoice', {
 				return (doc.docstatus==1 || doc.qty<=doc.actual_qty) ? "green" : "orange"
 			})
 	},
-	/*customer:function(frm){
-
-
-		frm.trigger('sales_person')
-		if(frm.doc.sales_person){
-			frm.doc.sales_team = []
-			var row = frm.add_child("sales_team");
-
-			row.sales_person = frm.doc.sales_person
-			row.allocated_percentage = 100
-			row.commission_rate = 1
-			row.allocated_amount = frm.doc.net_total
-			frm.refresh_field("sales_team")
-
+	after_save:function(frm) {
+		if (frm.doc.manual) {
+			if((frm.doc.manual_naming_series != frm.doc.name) && (!frm.doc.__islocal)) {				
+				frappe.call({
+					method: "trading.events.sales_invoice.change_autoname_and_remarks_after_save",
+					args:{
+						"name":frm.doc.name,
+						"manual_naming_series":frm.doc.manual_naming_series
+					},
+					callback: function(r) {
+						frappe.set_route('List', 'Sales Invoice', 'List');
+					}
+				});
+			}			
 		}
 	},
-	sales_person:function(frm){
+	// customer:function(frm){
 
-                if(frm.doc.sales_person){
-                        frm.doc.sales_team = []
-                        var row = frm.add_child("sales_team");
 
-                        row.sales_person = frm.doc.sales_person
-                        row.allocated_percentage = 100
-			row.commission_rate = 1
-                        row.allocated_amount = frm.doc.net_total
-                        frm.refresh_field("sales_team")
+	// 	frm.trigger('sales_person')
+	// 	if(frm.doc.sales_person){
+	// 		frm.doc.sales_team = []
+	// 		var row = frm.add_child("sales_team");
 
-                }
-        }*/
+	// 		row.sales_person = frm.doc.sales_person
+	// 		row.allocated_percentage = 100
+	// 		row.commission_rate = 1
+	// 		row.allocated_amount = frm.doc.net_total
+	// 		frm.refresh_field("sales_team")
+
+	// 	}
+	// },
+	// sales_person:function(frm){
+
+    //             if(frm.doc.sales_person){
+    //                     frm.doc.sales_team = []
+    //                     var row = frm.add_child("sales_team");
+
+    //                     row.sales_person = frm.doc.sales_person
+    //                     row.allocated_percentage = 100
+	// 		row.commission_rate = 1
+    //                     row.allocated_amount = frm.doc.net_total
+    //                     frm.refresh_field("sales_team")
+
+    //             }
+    //     }
 
 })
 
