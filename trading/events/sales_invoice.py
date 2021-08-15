@@ -42,3 +42,21 @@ def change_autoname_and_remarks_after_save(**args):
 						manual_naming_series = args.get("manual_naming_series")))
 			frappe.db.commit()
 	return True
+
+@frappe.whitelist()
+def check_if_manual_and_manual_series_exist(**args):
+	"""
+	check the manual exist
+	"""
+	if args.get("name"):
+		return frappe.db.sql("""
+						select 
+							tsi.manual, 
+							tsi.manual_naming_series 
+						from 
+							`tabSales Invoice` tsi 
+						where 
+							tsi.name = "{name}";""".format(
+							name = args.get("name")), as_dict=True)
+	else:
+		return {}						

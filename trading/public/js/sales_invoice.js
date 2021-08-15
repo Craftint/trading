@@ -14,6 +14,27 @@ frappe.ui.form.on('Sales Invoice', {
 			frm.set_value("update_stock",1)
 	   	}
             }
+		
+		if(!frm.doc.__islocal && (frm.doc.docstatus==0)){
+			var global_frm = frm;
+			frappe.call({
+				method: "trading.events.sales_invoice.check_if_manual_and_manual_series_exist",
+				
+				args:{
+					"name":frm.doc.name
+				},
+				callback: function(r) {
+					let is_empty = jQuery.isEmptyObject(r.message);					
+					if(!is_empty){
+						setTimeout(function(){
+							frm.set_value('manual', r.message[0].manual);
+							frm.set_value('manual_naming_series', r.message[0].manual_naming_series);
+							frm.refresh_fields(['manual', 'manual_naming_series']); 
+						}, 1000);						
+					}
+				}
+			});
+		}		
 	},
 	setup:function(frm)
 	{
@@ -27,12 +48,13 @@ frappe.ui.form.on('Sales Invoice', {
 			if((frm.doc.manual_naming_series != frm.doc.name) && (!frm.doc.__islocal)) {				
 				frappe.call({
 					method: "trading.events.sales_invoice.change_autoname_and_remarks_after_save",
+					
 					args:{
 						"name":frm.doc.name,
 						"manual_naming_series":frm.doc.manual_naming_series
 					},
 					callback: function(r) {
-						frappe.set_route('List', 'Sales Invoice', 'List');
+						frappe.set_route("Form", "Sales Invoice", frm.doc.manual_naming_series);
 					}
 				});
 			}			

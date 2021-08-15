@@ -12,7 +12,7 @@ frappe.ui.form.on("Delivery Note", {
 						"manual_naming_series":frm.doc.manual_naming_series
 					},
 					callback: function(r) {
-						frappe.set_route('List', 'Delivery Note', 'List');
+						frappe.set_route("Form", "Delivery Note", frm.doc.manual_naming_series);
 					}
 				});
 			}			
