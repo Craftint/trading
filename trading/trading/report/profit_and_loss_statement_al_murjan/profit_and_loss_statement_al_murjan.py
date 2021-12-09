@@ -46,7 +46,6 @@ def execute(filters=None):
 				lab = lab0[0]
 				break
 
-
 	gp = flt((flt(sales,2)-flt(cost,2)),2)
 
 	data.append({
