@@ -26,35 +26,75 @@ def execute(filters=None):
 	data.extend(income or [])
 	data.extend(expense or [])
 
-
-	sales = cost = 0
+	sales = cost = sales_t = cost_t = total_gp = 0
+	sales_dict = {}
+	cost_dict = {}
 	lab = ''
 
-	for inc_dict in income:
-		if inc_dict:
-			if inc_dict["account_name"]=="Sales":
-				sales = inc_dict["total"]
-				break
+	if filters.periodicity == "Yearly":
+		for inc_dict in income:
+			if inc_dict:
+				if inc_dict["account_name"]=="Sales":
+					sales = inc_dict["total"]
+					break
+	
+	else:
+		for inc_dict in income:
+			if inc_dict:
+				if inc_dict["account_name"]=="Sales":
+					inc = list(inc_dict.items())
+					sales_dict = dict(list(inc_dict.items())[(list(inc_dict.keys()).index("account_name"))+1:len(inc_dict)-2])
+					sales_t = inc_dict["total"]
+					break
+					
 
-	for exp_dict in expense:
-		if exp_dict:
-			if exp_dict["account_name"]=="Cost of Sale":
-				cost = exp_dict["total"]
-			if exp_dict["account_name"]=="Total Expense (Debit)":
-				els = list(exp_dict.items())
-				lab0 = els[-2]
-				lab = lab0[0]
-				break
+	if filters.periodicity == "Yearly":
+		for exp_dict in expense:
+			if exp_dict:
+				if exp_dict["account_name"]=="Cost of Sale":
+					cost = exp_dict["total"]
+				if exp_dict["account_name"]=="Total Expense (Debit)":
+					els = list(exp_dict.items())
+					lab0 = els[-2]
+					lab = lab0[0]
+					break
+	else:
+		for exp_dict in expense:
+			if exp_dict:
+				if exp_dict["account_name"]=="Cost of Sale":
+					exp = list(exp_dict.items())
+					cost_dict = dict(list(exp_dict.items())[(list(exp_dict.keys()).index("currency"))+1:len(exp_dict)-1])
+					cost_t = exp_dict["total"]
+					break
+
 
 	gp = flt((flt(sales,2)-flt(cost,2)),2)
+	total_gp = flt((sales_t - cost_t),2)
 
-	data.append({
-		'account_name': 'Gross Profit', 
-		'account': 'Gross Profit', 
-		'currency': 'AED', 
-		lab: gp, 
-		'total': gp},
-		)
+
+	gp_dict = {}
+
+	for k,v in sales_dict.items():
+		gp_dict[k]= flt((v - cost_dict[k]),2)
+
+		
+	if filters.periodicity == "Yearly":
+		data.append({
+			'account_name': 'Gross Profit', 
+			'account': 'Gross Profit', 
+			'currency': 'AED', 
+			lab: gp, 
+			'total': gp},
+			)
+	else:
+		gp_dict.update({
+			'account_name': 'Gross Profit', 
+			'account': 'Gross Profit', 
+			'currency': 'AED', 
+			'total': total_gp
+			},
+			)
+		data.append(gp_dict)
 
 	if net_profit_loss:
 		data.append(net_profit_loss)
